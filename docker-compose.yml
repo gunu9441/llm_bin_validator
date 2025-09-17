@@ -1,16 +1,19 @@
+version: '3.8'
+
 services:
-  db:
-    image: pgvector/pgvector:pg16
-    container_name: pgvector-db-clone
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: postgres
+  oracle-db:
+    image: gvenzl/oracle-xe:21-slim   # Oracle XE 21c 슬림 이미지
+    container_name: oracle-db
     ports:
-      - "5432:5432"
+      - "1521:1521"   # Oracle Listener 포트
+      - "5500:5500"   # Enterprise Manager Express
+    environment:
+      ORACLE_PASSWORD: admin123       # SYS, SYSTEM 계정 비밀번호
+      APP_USER: myuser                # 애플리케이션 계정 이름
+      APP_USER_PASSWORD: mypass       # 애플리케이션 계정 비밀번호
     volumes:
-      - pgdata:/var/lib/postgresql/data
-      - ./postgres/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - oracle-data:/opt/oracle/oradata
+    restart: always
 
 volumes:
-  pgdata:
+  oracle-data:
